@@ -3,3 +3,5 @@ class Airflags {
     console.log('Hello');
   }
 }
+
+export default Airflags;
