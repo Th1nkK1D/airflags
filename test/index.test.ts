@@ -1,5 +1,5 @@
-import { server } from './mock/msw';
-import Airflags from '.';
+import { server } from '../src/mock/msw';
+import Airflags from '../src';
 
 beforeAll(() => server.listen());
 afterAll(() => server.close());
@@ -9,6 +9,7 @@ const mockAirtableConfig = {
   tableName: 'someTable',
   apiKey: 'apiKey',
 };
+
 test('getFlags function should return correct development flags', async () => {
   const expectedFlags = {
     featureA: true,

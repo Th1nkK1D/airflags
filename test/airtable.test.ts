@@ -1,5 +1,5 @@
-import { fetchAirtableRecords } from './airtable';
-import { mockedData, server } from './mock/msw';
+import { fetchAirtableRecords } from '../src/airtable';
+import { mockedData, server } from '../src/mock/msw';
 
 beforeAll(() => server.listen());
 afterAll(() => server.close());
