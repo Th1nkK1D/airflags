@@ -1,4 +1,4 @@
-import { server } from '../src/mock/msw';
+import { server } from '../mock/msw';
 import Airflags from '../src';
 
 beforeAll(() => server.listen());
