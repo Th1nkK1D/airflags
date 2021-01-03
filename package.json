@@ -18,7 +18,7 @@
     "np": "np"
   },
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

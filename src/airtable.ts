@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 
 interface AirtableRecord {
   id: string;
@@ -24,11 +24,15 @@ export const fetchAirtableRecords = async ({
   baseId,
   tableName,
   apiKey,
-}: AirtableConfig): Promise<AirtableResponse> =>
-  (
-    await fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
+}: AirtableConfig): Promise<AirtableResponse> => {
+  const { data } = await axios.get(
+    `https://api.airtable.com/v0/${baseId}/${tableName}`,
+    {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
-    })
-  ).json();
+    }
+  );
+
+  return data;
+};
