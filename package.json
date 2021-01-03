@@ -1,7 +1,7 @@
 {
   "name": "airflags",
   "version": "0.1.1",
-  "description": "Airtable as a feature flags utility",
+  "description": "Airtable as a JavaScript feature flags",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
