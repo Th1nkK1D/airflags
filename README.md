@@ -1,2 +1,3 @@
 # airflags
-Airtable as a feature flags utilities
+
+Airtable as a feature flags utility
