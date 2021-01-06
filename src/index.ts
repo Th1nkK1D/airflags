@@ -9,32 +9,28 @@ type FeatureFlags = {
 };
 
 class Airflags {
-  private airtableConfig: AirtableConfig;
-  private environment: string;
-  private featureFlags: FeatureFlags | undefined;
+  private static airtableConfig: AirtableConfig;
+  private static environment: string;
+  private static featureFlags: FeatureFlags | undefined;
 
-  constructor({ environment, ...airtableConfig }: AirflagsConfig) {
-    this.airtableConfig = airtableConfig;
-    this.environment = environment;
+  static config({ environment, ...airtableConfig }: AirflagsConfig): void {
+    Airflags.airtableConfig = airtableConfig;
+    Airflags.environment = environment;
   }
 
-  private async fetch() {
-    const { records } = await fetchAirtableRecords(this.airtableConfig);
+  static async load(): Promise<void> {
+    const { records } = await fetchAirtableRecords(Airflags.airtableConfig);
 
     this.featureFlags = records.reduce(
       (flags, { fields }) => ({
         ...flags,
-        [fields.Name]: !!fields[this.environment],
+        [fields.Name]: !!fields[Airflags.environment],
       }),
       {}
     );
   }
 
-  async getFlags(): Promise<FeatureFlags> {
-    if (!this.featureFlags) {
-      await this.fetch();
-    }
-
+  static getFlags(): FeatureFlags {
     return this.featureFlags as FeatureFlags;
   }
 }

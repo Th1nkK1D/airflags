@@ -10,34 +10,49 @@ const mockAirtableConfig = {
   apiKey: 'apiKey',
 };
 
-test('getFlags function should return correct development flags', async () => {
+test('load method should load flags from airtable to the static class', async () => {
   const expectedFlags = {
     featureA: true,
     featureB: true,
   };
 
-  const airflags = new Airflags({
+  Airflags.config({
     environment: 'Development',
     ...mockAirtableConfig,
   });
 
-  const flags = await airflags.getFlags();
+  await Airflags.load();
+
+  const flags = Airflags.getFlags();
 
   expect(flags).toStrictEqual(expectedFlags);
 });
 
-test('getFlags function should return correct production flags', async () => {
+test('getFlags method should return loaded flags without calling config or load again', async () => {
+  const expectedFlags = {
+    featureA: true,
+    featureB: true,
+  };
+
+  const flags = Airflags.getFlags();
+
+  expect(flags).toStrictEqual(expectedFlags);
+});
+
+test('config with new value and re-load should give the corresponded new flags', async () => {
   const expectedFlags = {
     featureA: false,
     featureB: true,
   };
 
-  const airflags = new Airflags({
+  Airflags.config({
     environment: 'Production',
     ...mockAirtableConfig,
   });
 
-  const flags = await airflags.getFlags();
+  await Airflags.load();
+
+  const flags = Airflags.getFlags();
 
   expect(flags).toStrictEqual(expectedFlags);
 });
