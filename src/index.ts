@@ -4,14 +4,12 @@ interface AirflagsConfig extends AirtableConfig {
   environment: string;
 }
 
-type FeatureFlags = {
-  [feature: string]: boolean;
-};
+type Flags = Record<string, boolean>;
 
 class Airflags {
   private static airtableConfig: AirtableConfig;
   private static environment: string;
-  private static featureFlags: FeatureFlags | undefined;
+  private static flags: Flags | undefined;
 
   static config({ environment, ...airtableConfig }: AirflagsConfig): void {
     Airflags.airtableConfig = airtableConfig;
@@ -25,7 +23,7 @@ class Airflags {
 
     const { records } = await fetchAirtableRecords(Airflags.airtableConfig);
 
-    Airflags.featureFlags = records.reduce(
+    Airflags.flags = records.reduce(
       (flags, { fields }) => ({
         ...flags,
         [fields.Name]: !!fields[Airflags.environment],
@@ -34,12 +32,12 @@ class Airflags {
     );
   }
 
-  static getFlags(): FeatureFlags {
-    if (!Airflags.featureFlags) {
+  static getFlags(): Flags {
+    if (!Airflags.flags) {
       throw new Error('Flags not loaded, please call Airflag.load() first');
     }
 
-    return Airflags.featureFlags as FeatureFlags;
+    return Airflags.flags as Flags;
   }
 }
 

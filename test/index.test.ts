@@ -1,10 +1,23 @@
 import { server } from '../mock/msw';
 import Airflags from '../src';
 
+type Feature = 'featureA' | 'featureB';
+type FeatureFlags = Record<Feature, boolean>;
+
 const mockAirtableConfig = {
   baseId: 'someBase',
   tableName: 'someTable',
   apiKey: 'apiKey',
+};
+
+const expectedDevelopmentFlags: FeatureFlags = {
+  featureA: true,
+  featureB: true,
+};
+
+const expectedProductionFlags: FeatureFlags = {
+  featureA: false,
+  featureB: true,
 };
 
 beforeAll(() => server.listen());
@@ -19,11 +32,6 @@ test('calling getFlags before load should throw an error', () => {
 });
 
 test('load method should load flags from airtable to the static class', async () => {
-  const expectedFlags = {
-    featureA: true,
-    featureB: true,
-  };
-
   Airflags.config({
     environment: 'Development',
     ...mockAirtableConfig,
@@ -31,28 +39,18 @@ test('load method should load flags from airtable to the static class', async ()
 
   await Airflags.load();
 
-  const flags = Airflags.getFlags();
+  const flags: FeatureFlags = Airflags.getFlags();
 
-  expect(flags).toStrictEqual(expectedFlags);
+  expect(flags).toStrictEqual(expectedDevelopmentFlags);
 });
 
 test('getFlags method should return loaded flags without calling config or load again', async () => {
-  const expectedFlags = {
-    featureA: true,
-    featureB: true,
-  };
+  const flags: FeatureFlags = Airflags.getFlags();
 
-  const flags = Airflags.getFlags();
-
-  expect(flags).toStrictEqual(expectedFlags);
+  expect(flags).toStrictEqual(expectedDevelopmentFlags);
 });
 
 test('config with new value and re-load should give the corresponded new flags', async () => {
-  const expectedFlags = {
-    featureA: false,
-    featureB: true,
-  };
-
   Airflags.config({
     environment: 'Production',
     ...mockAirtableConfig,
@@ -60,9 +58,9 @@ test('config with new value and re-load should give the corresponded new flags',
 
   await Airflags.load();
 
-  const flags = Airflags.getFlags();
+  const flags: FeatureFlags = Airflags.getFlags();
 
-  expect(flags).toStrictEqual(expectedFlags);
+  expect(flags).toStrictEqual(expectedProductionFlags);
 });
 
 test('bad response from airtable request should throw error', async () => {
