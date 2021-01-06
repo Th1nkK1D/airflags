@@ -19,9 +19,13 @@ class Airflags {
   }
 
   static async load(): Promise<void> {
+    if (!Airflags.airtableConfig || !Airflags.environment) {
+      throw new Error('Config not found, please call Airflag.config() first');
+    }
+
     const { records } = await fetchAirtableRecords(Airflags.airtableConfig);
 
-    this.featureFlags = records.reduce(
+    Airflags.featureFlags = records.reduce(
       (flags, { fields }) => ({
         ...flags,
         [fields.Name]: !!fields[Airflags.environment],
@@ -31,7 +35,11 @@ class Airflags {
   }
 
   static getFlags(): FeatureFlags {
-    return this.featureFlags as FeatureFlags;
+    if (!Airflags.featureFlags) {
+      throw new Error('Flags not loaded, please call Airflag.load() first');
+    }
+
+    return Airflags.featureFlags as FeatureFlags;
   }
 }
 

@@ -26,9 +26,16 @@ export const mockedData = {
 
 export const server = setupServer(
   rest.get(
-    'https://api.airtable.com/v0/:baseId/:tableName',
-    (req, res, ctx) => {
-      return res(ctx.json(mockedData));
-    }
+    'https://api.airtable.com/v0/badBaseId/:tableName',
+    (req, res, ctx) =>
+      res(
+        ctx.status(403),
+        ctx.json({
+          errorMessage: 'Bad base id',
+        })
+      )
+  ),
+  rest.get('https://api.airtable.com/v0/:baseId/:tableName', (req, res, ctx) =>
+    res(ctx.json(mockedData))
   )
 );
