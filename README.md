@@ -7,27 +7,31 @@ _\*This project is in early-development stage. All feedbacks and contributions a
 ## Features
 
 - Toggle flags via Airtable
+- Config and load once, access flags everywhere
 - Support both Node.js and browser
-- Flags are cached with the instance
-- Written with TypeScript
+- Written in TypeScript
+
+## Why Airtable?
+
+- Having a web UI
+- API ready
+- [Free plan](https://airtable.com/pricing) should be more than enough for feature flags
 
 ## Installation
 
-With npm
+With NPM
 
 ```bash
 npm i airflags
 ```
 
-or yarn
+or Yarn
 
 ```bash
 yarn add airflags
 ```
 
-## Setup
-
-### 1. Config Airtable
+## Setup Airtable
 
 Create a table with following fields (columns)
 
@@ -36,51 +40,53 @@ Create a table with following fields (columns)
 
 ![Airtable Config](https://i.imgur.com/CuSmNM0.png)
 
-Flags can be toggled on/off by clicking the checkbox
+Flags can be toggled on/off by clicking the checkbox.
 
-### 2. Config Airflags
+## Usage
 
 ```typescript
 import Airflags from 'airflags';
 
-const airflags = new Airflags({
+// Config Airflags
+Airflags.config({
   environment: 'Development',
   baseId: 'AIRTABLE_BASE_ID',
   tableName: 'AIRTABLE_TABLE_NAME',
   apiKey: 'AIRTABLE_API_KEY',
 });
+
+// Load flags from Airtable (asyncronous)
+await Airflags.load();
+
+// Get loaded feature flags
+const flags = Airflags.getFlags();
 ```
 
-**Airflags config:**
+**Config object**
 
 - environment: The corresponded environment field name in Airtable.
 - baseId, tableName and apiKey are for Airtable API. More info can be found on [Airtable API doc](https://airtable.com/api)
 
-## Usage
-
-To get all flags from airflags instance, simply use:
-
-**With async/await**
-
-```typescript
-const flags = await airflags.getFlags();
-```
-
-**With promise then**
-
-```typescript
-airflags.getFlags().then((flags) => {
-  // Use flags
-});
-```
-
-`getFlags` will return a Promise of Object containing each flag name with coresponded boolean value
+**Example of getFlags return value**
 
 ```typescript
 {
   featureA: true,
-  featureB: true
+  featureB: false
 }
 ```
 
-**Note:** Airtable API will be called once on first `getFlags` called in each instance. Flags changes on Airtable after that won't have any effect.
+**Add type casting (optional)**
+
+```typescript
+type Feature = 'featureA' | 'featureB';
+type FeatureFlags = Record<Feature, boolean>;
+
+const flags: FeatureFlags = Airflags.getFlags();
+```
+
+**Airflags is a singleton**
+
+- `Airflags` is a class with static methods and properties.
+- Meaning that `config()` and `load()` methods are required to run atleast once. Then `getFlags()` can be called anywhere.
+- However, `config()` and `load()` methods can be called anytime after when you want to change the config or reload the flags.
