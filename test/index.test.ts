@@ -1,7 +1,11 @@
 import { server } from '../mock/msw';
 import Airflags from '../src';
 
-type Feature = 'featureA' | 'featureB';
+enum Feature {
+  FeatureA = 'featureA',
+  FeatureB = 'featureB',
+}
+
 type FeatureFlags = Record<Feature, boolean>;
 
 const mockAirtableConfig = {
@@ -11,13 +15,13 @@ const mockAirtableConfig = {
 };
 
 const expectedDevelopmentFlags: FeatureFlags = {
-  featureA: true,
-  featureB: true,
+  [Feature.FeatureA]: true,
+  [Feature.FeatureB]: true,
 };
 
 const expectedProductionFlags: FeatureFlags = {
-  featureA: false,
-  featureB: true,
+  [Feature.FeatureA]: false,
+  [Feature.FeatureB]: true,
 };
 
 beforeAll(() => server.listen());
@@ -75,11 +79,11 @@ test('bad response from airtable request should throw error', async () => {
 
 describe('is method', () => {
   test('should return true if corresponded key feature is enable', () => {
-    expect(Airflags.is('featureB')).toBe(true);
+    expect(Airflags.is(Feature.FeatureB)).toBe(true);
   });
 
   test('should return flase if corresponded key feature is disabled', () => {
-    expect(Airflags.is('featureA')).toBe(false);
+    expect(Airflags.is(Feature.FeatureA)).toBe(false);
   });
 
   test('should return false if corresponded key feature is not exist', () => {
