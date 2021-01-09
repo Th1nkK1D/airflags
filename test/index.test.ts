@@ -72,3 +72,17 @@ test('bad response from airtable request should throw error', async () => {
 
   await expect(Airflags.load).rejects.toThrow();
 });
+
+describe('is method', () => {
+  test('should return true if corresponded key feature is enable', () => {
+    expect(Airflags.is('featureB')).toBe(true);
+  });
+
+  test('should return flase if corresponded key feature is disabled', () => {
+    expect(Airflags.is('featureA')).toBe(false);
+  });
+
+  test('should return false if corresponded key feature is not exist', () => {
+    expect(Airflags.is('featureC')).toBe(false);
+  });
+});

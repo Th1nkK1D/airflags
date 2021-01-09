@@ -32,6 +32,14 @@ class Airflags {
     );
   }
 
+  static is(key: string): boolean {
+    if (!Airflags.flags) {
+      throw new Error('Flags not loaded, please call Airflag.load() first');
+    }
+
+    return !!Airflags.flags[key];
+  }
+
   static getFlags(): Flags {
     if (!Airflags.flags) {
       throw new Error('Flags not loaded, please call Airflag.load() first');
